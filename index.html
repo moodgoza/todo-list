@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script
+      src="https://kit.fontawesome.com/da1ba0673b.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="cont">
+      <div id="card">
+        <h1>Are you sure to delete this todo</h1>
+        <div id="action">
+          <button id="btn_yes" onclick="confirmationYes()">Yes</button>
+          <button id="btn_no" onclick="confirmationNo()">No</button>
+        </div>
+      </div>
+    </div>
+    <section id="container">
+
+
+      <h1>TODO LIST</h1>
+      <article>
+        <input id="new-task" /> <button type="submit" id="add">Add</button>
+      </article>
+      <article>
+        <input /> <button type="submit" id="search">Search</button>
+      </article>
+      <table>
+        <thead>
+          <th><h4>ID</h4></th>
+          <th><h4>Task</h4></th>
+          <th><h4>Status</h4></th>
+          <th><h4>User</h4></th>
+          <th><h4>Actions</h4></th>
+        </thead>
+       
+        <tbody>
+          
+        </tbody>
+      </table>
+      <footer>
+        <p id="numOfTodo"># of task</p>
+        <div><i onclick="leftArrow()" class="fa-solid fa-arrow-left"></i> <span>page</span><i onclick="rightArrow()" class="fa-solid fa-arrow-right"></i></div>
+      </footer>
+    </section>
+    <script src="./script.js"></script>
+  </body>
+</html>
