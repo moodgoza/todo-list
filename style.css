@@ -32,7 +32,9 @@ body {
 
 input:focus {
   outline-width: 0;
-  border: 1px solid rgb(18, 145, 230);
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
  
 }
 button {
@@ -92,7 +94,10 @@ button {
 }
 
 input {
-  border: 0.0625rem solid #eeeeee;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 3px solid rgba(12, 12, 12, 0.07);
   border-radius: 0.125rem;
   width: 16rem;
   height: 32px;
@@ -204,8 +209,8 @@ p {
 padding: 0;
 }
 #edit {
-  display: none;
-}
+    display: none;
+  }
 #numOfTodo {
   cursor: pointer;
 }

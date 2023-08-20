@@ -257,7 +257,7 @@ const replaceToInput  = (id) => {
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   todoInput.style.display = "block"
   todoP.style.display = "none"
-  document.getElementById("edit").style.display = 'inline';
+  document.querySelector(`#todo${id} #edit`).style.display = 'inline';
 }
 
 const replaceToP = (id) => {
@@ -270,11 +270,10 @@ const replaceToP = (id) => {
   }
   todoInput.style.display = "none"
   todoP.style.display = "block"
-  document.getElementById("edit").style.display = 'none';
+  document.querySelector(`#todo${id} #edit`).style.display = 'none';
 }
 
 const editContent = (id) => {
-  console.log(id)
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   updateContent(id, todoInput.value)
@@ -285,7 +284,7 @@ const editContent = (id) => {
     todoInput.style.display = "none"
     todoP.style.display = "block"
     localStorage.setItem("todos", JSON.stringify(todos))
-    document.getElementById("edit").style.display = 'none';
+    document.querySelector(`#todo${id} #edit`).style.display = 'none';
   })
 }
 
