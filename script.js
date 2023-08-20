@@ -60,7 +60,6 @@ const addTodo = async (todo) => {
 
 //change status api
 const changeStatus = (todo) => {
-
   let res = fetch(`${BASE_URL}/${todo.id}`, {
     headers: {
       Authorization: `Bearer ${myToken}`,
@@ -75,7 +74,6 @@ const changeStatus = (todo) => {
 
 //delete Todo api
 const deleteTodo = (id) => {
-
   let res = fetch(`${BASE_URL}/${id}`, {
     headers: {
       Authorization: `Bearer ${myToken}`,
@@ -87,8 +85,8 @@ const deleteTodo = (id) => {
   return res;
 };
 
-//update content api
-const updateContent = async(id, newContent) => {
+// Edit content api
+const updateContent = async (id, newContent) => {
   let res = fetch(`${BASE_URL}/${id}`, {
     headers: {
       Authorization: `Bearer ${myToken}`,
@@ -99,17 +97,16 @@ const updateContent = async(id, newContent) => {
   });
 
   return res;
-}
+};
+
 //render todos in the container
 const renderPage = (todos, fromSerach = false) => {
-
   if ((page < 1 || (page - 1) * 7 >= todos.length) && !fromSerach) {
     page = Math.max(1, page - 1);
     return;
   }
 
-  tableBody.innerHTML =
-  ` <tr>
+  tableBody.innerHTML = ` <tr>
       <td colspan="5">
         <hr />
       </td>
@@ -122,9 +119,7 @@ const renderPage = (todos, fromSerach = false) => {
   const pageNumber = document.querySelector("footer > div > span");
   pageNumber.innerHTML = `Page ${page}`;
 
- 
   numOfTodo.innerHTML = `${todos.length} Task`;
-
 };
 
 //move to the next page
@@ -179,7 +174,7 @@ addButton.addEventListener("click", (event) => {
   );
 });
 
-// mark todo as done or unde done
+// mark todo as done or unde
 const changeTodoStatus = (id) => {
   const todo = todos.filter((t) => t.id === id)[0];
 
@@ -240,60 +235,70 @@ const deleteTodoById = async (id) => {
   document.getElementById("cont").style.display = "flex";
 };
 
-
-searchButton.addEventListener('click', (event) => {
-  const searchResult = todos.filter(t => String(t.todo).includes(String(searchInput.value)));
+// search todo by content
+searchButton.addEventListener("click", (event) => {
+  const searchResult = todos.filter((t) =>
+    String(t.todo).includes(String(searchInput.value))
+  );
   console.log(searchResult);
   page = 1;
   renderPage(searchResult, true);
 });
 
-numOfTodo.addEventListener('click', (event) => {
+numOfTodo.addEventListener("click", (event) => {
   page = 1;
   renderPage(todos);
-})
-const replaceToInput  = (id) => {
+});
+
+// replace p with input to edit content
+const replaceToInput = (id) => {
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
-  todoInput.style.display = "block"
-  todoP.style.display = "none"
-  document.querySelector(`#todo${id} #edit`).style.display = 'inline';
-}
+  todoInput.style.display = "block";
+  todoP.style.display = "none";
+  document.querySelector(`#todo${id} #edit`).style.display = "inline";
+};
 
+// replace input with p when you finished editing
 const replaceToP = (id) => {
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
-  console.log(String(todoInput.value), String(todoP.innerHTML))
-  if(String(todoInput.value) !== String(todoP.innerHTML))
-  {
+  console.log(String(todoInput.value), String(todoP.innerHTML));
+  if (String(todoInput.value) !== String(todoP.innerHTML)) {
     return false;
   }
-  todoInput.style.display = "none"
-  todoP.style.display = "block"
-  document.querySelector(`#todo${id} #edit`).style.display = 'none';
-}
+  todoInput.style.display = "none";
+  todoP.style.display = "block";
+  document.querySelector(`#todo${id} #edit`).style.display = "none";
+};
 
+// edit content when click on edit icon
 const editContent = (id) => {
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
-  updateContent(id, todoInput.value)
-  .then(() => {
-    let todo = todos.filter(t => t.id === id)[0];
-    todo.todo = todoInput.value
+  updateContent(id, todoInput.value).then(() => {
+    let todo = todos.filter((t) => t.id === id)[0];
+    todo.todo = todoInput.value;
     todoP.innerHTML = todo.todo;
-    todoInput.style.display = "none"
-    todoP.style.display = "block"
-    localStorage.setItem("todos", JSON.stringify(todos))
-    document.querySelector(`#todo${id} #edit`).style.display = 'none';
-  })
-}
+    todoInput.style.display = "none";
+    todoP.style.display = "block";
+    localStorage.setItem("todos", JSON.stringify(todos));
+    document.querySelector(`#todo${id} #edit`).style.display = "none";
+  });
+};
 
 //generate todo
 const genTodo = (todo) => {
   return `
       <tr id=todo${todo.id}>
       <td><span id="todoId">${todo.id}</span></td>
-      <td><span id="desc"><input onblur="replaceToP(${todo.id})" id='todo-input' value="${todo.todo}"> <p onclick="replaceToInput(${todo.id})" id="todo-p">${todo.todo}</p> <span id="edit"><i onclick="editContent(${todo.id})" class="fa-solid fa-pen-to-square"></i></span></span></td>
+      <td><span id="desc"><input onblur="replaceToP(${
+        todo.id
+      })" id='todo-input' value="${todo.todo}"> <p onclick="replaceToInput(${
+    todo.id
+  })" id="todo-p">${todo.todo}</p> <span id="edit"><i onclick="editContent(${
+    todo.id
+  })" class="fa-solid fa-pen-to-square"></i></span></span></td>
       <td><span id=status>${
         todo.completed ? "complete" : "In progress"
       }</span></td>
