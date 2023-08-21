@@ -1,7 +1,7 @@
 const tableBody = document.getElementsByTagName("TBODY")[0];
 const todoDiscription = document.getElementById("new-task");
 const addButton = document.getElementById("add");
-const searchButton = document.getElementById("search");
+//const searchButton = document.getElementById("search");
 const container = document.getElementById("container");
 const BASE_URL = "https://dummyjson.com/todos";
 const cont = document.getElementById("cont");
@@ -12,7 +12,7 @@ let page = 1;
 let todos = [];
 let myToken = "";
 container.hidden = true;
-
+let id_last_press = null;
 // log in api
 const login = async () => {
   let res = await fetch("https://dummyjson.com/auth/login", {
@@ -73,13 +73,13 @@ const changeStatus = (todo) => {
 };
 
 //delete Todo api
-const deleteTodo = (id) => {
-  let res = fetch(`${BASE_URL}/${id}`, {
+const deleteTodo = async(id) => {
+  let res = await fetch(`${BASE_URL}/${id <= 30 ? id : 151 }`, {
     headers: {
       Authorization: `Bearer ${myToken}`,
       "Content-Type": "application/json",
     },
-    method: "Delete",
+    method: "DELETE",
   });
 
   return res;
@@ -87,7 +87,7 @@ const deleteTodo = (id) => {
 
 // Edit content api
 const updateContent = async (id, newContent) => {
-  let res = fetch(`${BASE_URL}/${id}`, {
+  let res = await fetch(`${BASE_URL}/${id}`, {
     headers: {
       Authorization: `Bearer ${myToken}`,
       "Content-Type": "application/json",
@@ -159,6 +159,8 @@ login().then(({ token }) => {
 addButton.addEventListener("click", (event) => {
   addTodo({ todo: todoDiscription.value, completed: false, userId: 2 }).then(
     (todo) => {
+      todo.id = todos[todos.length - 1].id + 1;
+      console.log(todo)
       if (page * 7 > todos.length) {
         tableBody.innerHTML += genTodo(todo);
       }
@@ -166,13 +168,14 @@ addButton.addEventListener("click", (event) => {
       todos.push(todo);
 
       localStorage.setItem("todos", JSON.stringify(todos));
-
+      console.log(todo)
       const numOfTodo = document.getElementById("numOfTodo");
 
       numOfTodo.innerHTML = `${todos.length} Task`;
     }
   );
 });
+
 
 // mark todo as done or unde
 const changeTodoStatus = (id) => {
@@ -236,44 +239,77 @@ const deleteTodoById = async (id) => {
 };
 
 // search todo by content
-searchButton.addEventListener("click", (event) => {
+// searchButton.addEventListener("", (event) => {
+//   const searchResult = todos.filter((t) =>
+//     String(t.todo).includes(String(searchInput.value))
+//   );
+//   console.log(searchResult);
+//   page = 1;
+//   renderPage(searchResult, true);
+// });
+
+
+searchInput.addEventListener("keyup", (event) => {
+  console.log("hahaha")
   const searchResult = todos.filter((t) =>
-    String(t.todo).includes(String(searchInput.value))
+    String(t.todo).toLocaleLowerCase().includes(String(searchInput.value))
   );
   console.log(searchResult);
   page = 1;
   renderPage(searchResult, true);
 });
-
 numOfTodo.addEventListener("click", (event) => {
   page = 1;
   renderPage(todos);
 });
 
+
 // replace p with input to edit content
 const replaceToInput = (id) => {
+  event.stopPropagation()
+  if( id_last_press)
+  {
+    replaceToP(id_last_press);
+  }
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
+  todoInput.addEventListener("click", (event) => {
+    event.stopPropagation()
+  })
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   todoInput.style.display = "block";
   todoP.style.display = "none";
   document.querySelector(`#todo${id} #edit`).style.display = "inline";
+  id_last_press = id;
 };
 
+window.addEventListener("click", (e) => 
+{
+  console.log(id_last_press)
+  if(id_last_press)
+  {
+    console.log(id_last_press)
+    replaceToP(id_last_press);
+  }
+})
 // replace input with p when you finished editing
 const replaceToP = (id) => {
+  console.log(id)
+  event.stopPropagation()
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
-  const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
-  console.log(String(todoInput.value), String(todoP.innerHTML));
+  const todoP = document.querySelector(`#todo${id} #desc #todo-p`);console.log(todoInput, todoP);
   if (String(todoInput.value) !== String(todoP.innerHTML)) {
     return false;
   }
+  
   todoInput.style.display = "none";
   todoP.style.display = "block";
   document.querySelector(`#todo${id} #edit`).style.display = "none";
+  id_last_press = null;
 };
 
 // edit content when click on edit icon
 const editContent = (id) => {
+  event.stopPropagation()
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   updateContent(id, todoInput.value).then(() => {
@@ -292,9 +328,9 @@ const genTodo = (todo) => {
   return `
       <tr id=todo${todo.id}>
       <td><span id="todoId">${todo.id}</span></td>
-      <td><span id="desc"><input onblur="replaceToP(${
+      <td><span id="desc"><input class="todo-content-input" onblur="replaceToP(${
         todo.id
-      })" id='todo-input' value="${todo.todo}"> <p onclick="replaceToInput(${
+      })" id='todo-input' value="${todo.todo}"> <p class="todo-content" onclick="replaceToInput(${
     todo.id
   })" id="todo-p">${todo.todo}</p> <span id="edit"><i onclick="editContent(${
     todo.id

@@ -30,13 +30,12 @@ body {
 
 }
 
+
 input:focus {
   outline-width: 0;
-  border-top: 0px;
-  border-left: 0px;
-  border-right: 0px;
- 
+ padding-left: 10px;
 }
+
 button {
   border-radius: 0.25rem;
   padding-inline: 0.875rem;
@@ -93,13 +92,12 @@ button {
   background-color: #d1485f;
 }
 
+
+
 input {
-  border-top: 0px;
-  border-left: 0px;
-  border-right: 0px;
-  border-bottom: 3px solid rgba(12, 12, 12, 0.07);
+  border: 1px solid rgba(12, 12, 12, 0.07);
   border-radius: 0.125rem;
-  width: 16rem;
+  width: 60%;
   height: 32px;
   margin-bottom: 1rem;
   padding: 0.25rem;
@@ -111,17 +109,27 @@ hr {
 }
 
 #new-task {
-  width: 8rem;
+  
   margin-right: 1rem;
   margin-top: 1rem;
 }
+
 
 table {
   width: 100%;
   height: 200px;
 }
+.todo-content {
+  max-width: 16rem;
+}
 
-#todo-p, #todo-input {
+.todo-content-input{
+  width: min-content;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+}
+.todo-content, .todo-content-input {
   font-size: small;
 }
 
@@ -180,6 +188,16 @@ h4 {
   box-shadow: 0 4px 9px -4px #dc4c64;
 }
 
+#search-input {
+  margin-top: 1rem;
+}
+
+#add-search-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  
+}
 #btn_yes:hover {
   background-color: #139c49;
 }
@@ -214,6 +232,29 @@ padding: 0;
 #numOfTodo {
   cursor: pointer;
 }
+#add-search-section article {
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+}
+
+
+@media(max-width: 430px)
+{
+  input,#add-search-section article {
+    width: 100%;
+   }
+    #add-search-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+      
+    }
+    #add{
+     width:  100%;
+    }
+}
 @media(max-width: 1000px)
 {
   #container 
@@ -226,8 +267,7 @@ padding: 0;
     padding: 0.125rem;
   }
 
-  
-
+ 
   #todo_action {
     display: flex;
     flex-direction: column;
