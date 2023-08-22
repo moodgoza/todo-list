@@ -73,8 +73,8 @@ const changeStatus = (todo) => {
 };
 
 //delete Todo api
-const deleteTodo = async(id) => {
-  let res = await fetch(`${BASE_URL}/${id <= 30 ? id : 151 }`, {
+const deleteTodo = async (id) => {
+  let res = await fetch(`${BASE_URL}/${id <= 30 ? id : 151}`, {
     headers: {
       Authorization: `Bearer ${myToken}`,
       "Content-Type": "application/json",
@@ -139,8 +139,8 @@ login().then(({ token }) => {
   myToken = token;
 
   container.hidden = false;
-
-  if (localStorage.getItem("todos") === null) {
+  //localStorage.setItem("todos", null);
+  if (JSON.parse(localStorage.getItem("todos")) === null) {
     getTodos(token).then((data) => {
       todos = data.todos;
 
@@ -158,24 +158,33 @@ login().then(({ token }) => {
 // create new todo
 addButton.addEventListener("click", (event) => {
   addTodo({ todo: todoDiscription.value, completed: false, userId: 2 }).then(
-    (todo) => {
-      todo.id = todos[todos.length - 1].id + 1;
-      console.log(todo)
-      if (page * 7 > todos.length) {
+    (todo) => { 
+      todoDiscription.value = ""
+      let todos_local = [...JSON.parse(localStorage.getItem("todos"))];
+
+      todo.id = todos_local[todos_local.length - 1].id + 1;
+      todos_local = [...todos_local, todo];
+
+      if (
+        page * 7 > todos.length &&
+        todo.todo.includes(String(searchInput.value))
+      ) {
         tableBody.innerHTML += genTodo(todo);
       }
 
-      todos.push(todo);
+      if (todo.todo.includes(String(searchInput.value))) {
+        todos.push(todo);
+      }
 
-      localStorage.setItem("todos", JSON.stringify(todos));
-      console.log(todo)
+      localStorage.setItem("todos", JSON.stringify(todos_local));
+      console.log(todos, todos_local);
       const numOfTodo = document.getElementById("numOfTodo");
 
       numOfTodo.innerHTML = `${todos.length} Task`;
+     
     }
   );
 });
-
 
 // mark todo as done or unde
 const changeTodoStatus = (id) => {
@@ -184,7 +193,18 @@ const changeTodoStatus = (id) => {
   changeStatus(todo).then((data) => {
     todo.completed = !todo.completed;
 
-    localStorage.setItem("todos", JSON.stringify(todos));
+    const todos_local = [...JSON.parse(localStorage.getItem("todos"))];
+
+    console.log(todos_local);
+    localStorage.setItem(
+      "todos",
+      JSON.stringify(
+        todos_local.map((tl) => {
+          if (tl.id === todo.id) tl.completed = !tl.completed;
+          return tl;
+        })
+      )
+    );
 
     const status = document.querySelector(`#todo${todo.id}  #status`);
 
@@ -215,8 +235,11 @@ const confirmationYes = async () => {
     trHr.remove();
 
     todos = todos.filter((t) => t.id != deletedId);
-
-    localStorage.setItem("todos", JSON.stringify(todos));
+    const todos_local = [...JSON.parse(localStorage.getItem("todos"))];
+    localStorage.setItem(
+      "todos",
+      JSON.stringify(todos_local.filter((t) => t.id != deletedId))
+    );
 
     const numOfTodo = document.getElementById("numOfTodo");
 
@@ -248,33 +271,34 @@ const deleteTodoById = async (id) => {
 //   renderPage(searchResult, true);
 // });
 
-
 searchInput.addEventListener("keyup", (event) => {
-  console.log("hahaha")
-  const searchResult = todos.filter((t) =>
+  const searchResult = JSON.parse(localStorage.getItem("todos")).filter((t) =>
     String(t.todo).toLocaleLowerCase().includes(String(searchInput.value))
   );
   console.log(searchResult);
   page = 1;
+  console.log(JSON.parse(localStorage.getItem("todos")));
+  todos = searchResult;
   renderPage(searchResult, true);
 });
 numOfTodo.addEventListener("click", (event) => {
   page = 1;
-  renderPage(todos);
+  const todos_local = [...JSON.parse(localStorage.getItem("todos"))];
+  todoDiscription.value = "";
+  searchInput.value = ""
+  renderPage(todos_local);
 });
-
 
 // replace p with input to edit content
 const replaceToInput = (id) => {
-  event.stopPropagation()
-  if( id_last_press)
-  {
+  event.stopPropagation();
+  if (id_last_press) {
     replaceToP(id_last_press);
   }
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   todoInput.addEventListener("click", (event) => {
-    event.stopPropagation()
-  })
+    event.stopPropagation();
+  });
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   todoInput.style.display = "block";
   todoP.style.display = "none";
@@ -282,25 +306,24 @@ const replaceToInput = (id) => {
   id_last_press = id;
 };
 
-window.addEventListener("click", (e) => 
-{
-  console.log(id_last_press)
-  if(id_last_press)
-  {
-    console.log(id_last_press)
+window.addEventListener("click", (e) => {
+  console.log(id_last_press);
+  if (id_last_press) {
+    console.log(id_last_press);
     replaceToP(id_last_press);
   }
-})
+});
 // replace input with p when you finished editing
 const replaceToP = (id) => {
-  console.log(id)
-  event.stopPropagation()
+  console.log(id);
+  event.stopPropagation();
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
-  const todoP = document.querySelector(`#todo${id} #desc #todo-p`);console.log(todoInput, todoP);
+  const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
+  console.log(todoInput, todoP);
   if (String(todoInput.value) !== String(todoP.innerHTML)) {
     return false;
   }
-  
+
   todoInput.style.display = "none";
   todoP.style.display = "block";
   document.querySelector(`#todo${id} #edit`).style.display = "none";
@@ -309,7 +332,7 @@ const replaceToP = (id) => {
 
 // edit content when click on edit icon
 const editContent = (id) => {
-  event.stopPropagation()
+  event.stopPropagation();
   const todoInput = document.querySelector(`#todo${id} #desc #todo-input`);
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   updateContent(id, todoInput.value).then(() => {
@@ -318,7 +341,12 @@ const editContent = (id) => {
     todoP.innerHTML = todo.todo;
     todoInput.style.display = "none";
     todoP.style.display = "block";
-    localStorage.setItem("todos", JSON.stringify(todos));
+    const todos_local = [...JSON.parse(localStorage.getItem("todos"))];
+
+    localStorage.setItem("todos", JSON.stringify( todos_local.map((tl) => {
+          if (tl.id === todo.id) tl.todo = todoInput.value
+          return tl;
+        }))); 
     document.querySelector(`#todo${id} #edit`).style.display = "none";
   });
 };
@@ -330,7 +358,9 @@ const genTodo = (todo) => {
       <td><span id="todoId">${todo.id}</span></td>
       <td><span id="desc"><input class="todo-content-input" onblur="replaceToP(${
         todo.id
-      })" id='todo-input' value="${todo.todo}"> <p class="todo-content" onclick="replaceToInput(${
+      })" id='todo-input' value="${
+    todo.todo
+  }"> <p class="todo-content" onclick="replaceToInput(${
     todo.id
   })" id="todo-p">${todo.todo}</p> <span id="edit"><i onclick="editContent(${
     todo.id
