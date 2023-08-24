@@ -66,7 +66,10 @@ button {
   background-color: #6c757d;
   box-shadow: 0 4px 9px -4px #6c757d;
 }
-
+p{
+  display: flex;
+  justify-content: center ;
+}
 #delete {
   background-color: #dc4c64;
   box-shadow: 0 4px 9px -4px #dc4c64;

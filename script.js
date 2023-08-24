@@ -53,7 +53,7 @@ const addTodo = async (todo) => {
     },
     body: JSON.stringify(todo),
   });
-
+  
   res = res.json();
   return res;
 };
@@ -157,6 +157,10 @@ login().then(({ token }) => {
 
 // create new todo
 addButton.addEventListener("click", (event) => {
+  if(String(todoDiscription.value).length === 0) {
+    alert(" empty tasks are not allowed");
+    return;
+  }
   addTodo({ todo: todoDiscription.value, completed: false, userId: 2 }).then(
     (todo) => { 
       todoDiscription.value = ""
@@ -242,7 +246,8 @@ const confirmationYes = async () => {
     );
 
     const numOfTodo = document.getElementById("numOfTodo");
-
+    if(todos.length % 7 === 0)
+    page--;
     renderPage(todos);
 
     numOfTodo.innerHTML = `${todos.length} Task`;
@@ -299,6 +304,7 @@ const replaceToInput = (id) => {
   todoInput.addEventListener("click", (event) => {
     event.stopPropagation();
   });
+
   const todoP = document.querySelector(`#todo${id} #desc #todo-p`);
   todoInput.style.display = "block";
   todoP.style.display = "none";
